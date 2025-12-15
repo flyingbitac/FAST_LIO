@@ -26,8 +26,8 @@
 #include "preprocess.h"
 
 /// *************Preconfiguration
-
-#define MAX_INI_COUNT (10)
+#define ALIGN_TO_GRIVATY
+#define MAX_INI_COUNT (100)
 
 const bool time_list(PointType &x, PointType &y) {return (x.curvature < y.curvature);};
 
@@ -194,8 +194,11 @@ void ImuProcess::IMU_init(const MeasureGroup &meas, esekfom::esekf<state_ikfom, 
   }
   state_ikfom init_state = kf_state.get_x();
   init_state.grav = S2(- mean_acc / mean_acc.norm() * G_m_s2);
-  
-  //state_inout.rot = Eye3d; // Exp(mean_acc.cross(V3D(0, 0, -1 / scale_gravity)));
+#ifdef ALIGN_TO_GRIVATY
+  Eigen::Quaterniond rotation = Eigen::Quaterniond::FromTwoVectors(mean_acc, Eigen::Vector3d::UnitZ());
+  init_state.rot = rotation;
+#endif
+  // state_inout.rot = Eye3d; // Exp(mean_acc.cross(V3D(0, 0, -1 / scale_gravity)));
   init_state.bg  = mean_gyr;
   init_state.offset_T_L_I = Lidar_T_wrt_IMU;
   init_state.offset_R_L_I = Lidar_R_wrt_IMU;
