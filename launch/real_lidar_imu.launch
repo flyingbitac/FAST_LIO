@@ -14,13 +14,16 @@
     <arg name="pub_map_points" default="false"/>
     <arg name="blind_distance" default="0.01"/>
 
+    <arg name="filter_size_surf" default="0.5"/>
+    <arg name="filter_size_map" default="0.5"/>
+
 	<rosparam command="load" file="$(find fast_lio)/config/mid360.yaml" />
 
 	<param name="feature_extract_enable" type="bool" value="0"/>
 	<param name="point_filter_num" type="int" value="3"/>
 	<param name="max_iteration" type="int" value="3" />
-	<param name="filter_size_surf" type="double" value="0.5" />
-	<param name="filter_size_map" type="double" value="0.5" />
+	<param name="filter_size_surf" type="double" value="$(arg filter_size_surf)" />
+	<param name="filter_size_map" type="double" value="$(arg filter_size_map)" />
 	<param name="cube_side_length" type="double" value="1000" />
 	<param name="runtime_pos_log_enable" type="bool" value="0" />
 
