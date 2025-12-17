@@ -1,3 +1,7 @@
+#ifndef PREPROCESS_H
+#define PREPROCESS_H
+
+
 #include <ros/ros.h>
 #include <pcl_conversions/pcl_conversions.h>
 #include <sensor_msgs/PointCloud2.h>
@@ -92,6 +96,7 @@ class Preprocess
   void set(bool feat_en, int lid_type, double bld, int pfilt_num);
 
   // sensor_msgs::PointCloud2::ConstPtr pointcloud;
+  /// Holds the full-resolution LiDAR point cloud (pl_full), the subset of corner-like points used for feature-based alignment (pl_corn), and the subset of planar/surface points for smooth-structure constraints (pl_surf).
   PointCloudXYZI pl_full, pl_corn, pl_surf;
   PointCloudXYZI pl_buff[128]; //maximum 128 line lidar
   vector<orgtype> typess[128]; //maximum 128 line lidar
@@ -122,3 +127,4 @@ class Preprocess
   double smallp_intersect, smallp_ratio;
   double vx, vy, vz;
 };
+#endif

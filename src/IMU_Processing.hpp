@@ -23,6 +23,7 @@
 #include <sensor_msgs/PointCloud2.h>
 #include <geometry_msgs/Vector3.h>
 #include "use-ikfom.hpp"
+#include "preprocess.h"
 
 /// *************Preconfiguration
 #define ALIGN_TO_GRIVATY
@@ -36,8 +37,12 @@ class ImuProcess
 public:
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-  ImuProcess();
+  // ImuProcess();
+  // ros odom pulisher to increase odom frequency
+  ImuProcess(ros::NodeHandle& nh); // 新增构造函数
   ~ImuProcess();
+  
+  ros::Publisher odom_pub_; 
 
   void Reset();
   void Reset(double start_timestamp, const sensor_msgs::ImuConstPtr &lastimu);
@@ -83,9 +88,14 @@ private:
   bool   imu_need_init_ = true;
 };
 
-ImuProcess::ImuProcess()
+ImuProcess::ImuProcess(ros::NodeHandle& nh)
     : b_first_frame_(true), imu_need_init_(true), start_timestamp_(-1)
 {
+
+  // publisher init
+  odom_pub_ = nh.advertise<nav_msgs::Odometry>("odometry/imu", 100000);
+
+  // file init
   init_iter_num = 1;
   Q = process_noise_cov();
   cov_acc       = V3D(0.1, 0.1, 0.1);
@@ -102,7 +112,7 @@ ImuProcess::ImuProcess()
 
 ImuProcess::~ImuProcess() {}
 
-void ImuProcess::Reset()
+void ImuProcess::Reset() 
 {
   // ROS_WARN("Reset ImuProcess");
   mean_acc      = V3D(0, 0, -1.0);
@@ -193,10 +203,6 @@ void ImuProcess::IMU_init(const MeasureGroup &meas, esekfom::esekf<state_ikfom, 
   }
   state_ikfom init_state = kf_state.get_x();
   init_state.grav = S2(- mean_acc / mean_acc.norm() * G_m_s2);
-#ifdef ALIGN_TO_GRIVATY
-  Eigen::Quaterniond rotation = Eigen::Quaterniond::FromTwoVectors(mean_acc, Eigen::Vector3d::UnitZ());
-  init_state.rot = rotation;
-#endif
   // state_inout.rot = Eye3d; // Exp(mean_acc.cross(V3D(0, 0, -1 / scale_gravity)));
   init_state.bg  = mean_gyr;
   init_state.offset_T_L_I = Lidar_T_wrt_IMU;
@@ -280,6 +286,7 @@ void ImuProcess::UndistortPcl(const MeasureGroup &meas, esekfom::esekf<state_ikf
 
     /* save the poses at each IMU measurements */
     imu_state = kf_state.get_x();
+
     angvel_last = angvel_avr - imu_state.bg;
     acc_s_last  = imu_state.rot * (acc_avr - imu_state.ba);
     for(int i=0; i<3; i++)
@@ -288,6 +295,31 @@ void ImuProcess::UndistortPcl(const MeasureGroup &meas, esekfom::esekf<state_ikf
     }
     double &&offs_t = tail->header.stamp.toSec() - pcl_beg_time;
     IMUpose.push_back(set_pose6d(offs_t, acc_s_last, angvel_last, imu_state.vel, imu_state.pos, imu_state.rot.toRotationMatrix()));
+
+    // publish the odometry at each IMU measurement over 100hz
+    nav_msgs::Odometry odom;
+    odom.header.stamp = ros::Time::now();
+    odom.header.frame_id = "map";
+    odom.pose.pose.position.x = imu_state.pos(0);
+    odom.pose.pose.position.y = imu_state.pos(1);
+    odom.pose.pose.position.z = imu_state.pos(2);
+    odom.pose.pose.orientation.x = imu_state.rot.x();
+    odom.pose.pose.orientation.y = imu_state.rot.y();
+    odom.pose.pose.orientation.z = imu_state.rot.z();
+    odom.pose.pose.orientation.w = imu_state.rot.w();
+
+    // 将世界坐标系速度转换到机体坐标系
+    V3D vel_body = imu_state.rot.conjugate() * imu_state.vel;
+    odom.twist.twist.linear.x = vel_body(0);
+    odom.twist.twist.linear.y = vel_body(1);
+    odom.twist.twist.linear.z = vel_body(2);
+
+    // 使用实际角速度而非陀螺仪偏差
+    odom.twist.twist.angular.x = angvel_last(0);
+    odom.twist.twist.angular.y = angvel_last(1);
+    odom.twist.twist.angular.z = angvel_last(2);
+    
+    odom_pub_.publish(odom);
   }
 
   /*** calculated the pos and attitude prediction at the frame-end ***/

@@ -12,6 +12,8 @@
     <!-- how many LiDAR frames saved in each pcd file; -->
     <!-- -1 : all frames will be saved in ONE pcd file, may lead to memory crash when having too much frames. -->
     <arg name="pcd_save_interval" default="-1"/>
+    <arg name="pub_map_points" default="true"/>
+    <arg name="blind_distance" default="0.01"/>
 
     <rosparam command="load" file="$(find fast_lio)/config/mid360.yaml" />
 
@@ -31,6 +33,8 @@
     <param name="extrinsic_est_en" type="bool" value="$(arg extrinsic_est_en)"/>
     <param name="pcd_save_en" type="bool" value="$(arg pcd_save_en)"/>
     <param name="pcd_save_interval" type="int" value="$(arg pcd_save_interval)"/>
+    <param name="pub_map_points" type="bool" value="$(arg pub_map_points)"/>
+    <param name="blind_distance" type="double" value="$(arg blind_distance)"/>
 
     <node pkg="fast_lio" type="fastlio_mapping" name="laserMapping" output="screen"/> 
 

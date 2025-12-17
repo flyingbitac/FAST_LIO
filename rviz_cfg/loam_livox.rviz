@@ -8,11 +8,11 @@ Panels:
         - /mapping1/surround1
         - /mapping1/currPoints1
         - /mapping1/currPoints1/Autocompute Value Bounds1
-        - /Odometry1/Odometry1
-        - /Odometry1/Odometry1/Shape1
-        - /Odometry1/Odometry1/Covariance1
-        - /Odometry1/Odometry1/Covariance1/Position1
-        - /Odometry1/Odometry1/Covariance1/Orientation1
+        - /Odometry1
+        - /Odometry1/fastlio_odometry1
+        - /Odometry1/fastlio_odometry1/Covariance1/Position1
+        - /Odometry1/fastlio_odometry1/Covariance1/Orientation1
+        - /Odometry1/imu_odometry1/Covariance1/Orientation1
         - /MarkerArray1/Namespaces1
       Splitter Ratio: 0.6432291865348816
     Tree Height: 713
@@ -177,12 +177,12 @@ Visualization Manager:
             Value: true
           Enabled: true
           Keep: 1
-          Name: Odometry
+          Name: fastlio_odometry
           Position Tolerance: 0.0010000000474974513
           Queue Size: 10
           Shape:
             Alpha: 1
-            Axes Length: 1
+            Axes Length: 0.5
             Axes Radius: 0.20000000298023224
             Color: 255; 85; 0
             Head Length: 0
@@ -190,7 +190,42 @@ Visualization Manager:
             Shaft Length: 0.05000000074505806
             Shaft Radius: 0.05000000074505806
             Value: Axes
-          Topic: /Odometry
+          Topic: /odometry/lidar
+          Unreliable: false
+          Value: true
+        - Angle Tolerance: 0.009999999776482582
+          Class: rviz/Odometry
+          Covariance:
+            Orientation:
+              Alpha: 0.5
+              Color: 255; 255; 127
+              Color Style: Unique
+              Frame: Local
+              Offset: 1
+              Scale: 1
+              Value: true
+            Position:
+              Alpha: 0.30000001192092896
+              Color: 204; 51; 204
+              Scale: 1
+              Value: true
+            Value: true
+          Enabled: true
+          Keep: 1
+          Name: imu_odometry
+          Position Tolerance: 0.0010000000474974513
+          Queue Size: 10
+          Shape:
+            Alpha: 1
+            Axes Length: 1
+            Axes Radius: 0.05000000074505806
+            Color: 255; 25; 0
+            Head Length: 0.30000001192092896
+            Head Radius: 0.10000000149011612
+            Shaft Length: 1
+            Shaft Radius: 0.05000000074505806
+            Value: Axes
+          Topic: /odometry/imu
           Unreliable: false
           Value: true
       Enabled: true
@@ -261,8 +296,8 @@ Visualization Manager:
     - Alpha: 1
       Autocompute Intensity Bounds: true
       Autocompute Value Bounds:
-        Max Value: 1.205161452293396
-        Min Value: -1.075814962387085
+        Max Value: 14.980828285217285
+        Min Value: -1.7624253034591675
         Value: true
       Axis: Z
       Channel Name: intensity
@@ -270,7 +305,7 @@ Visualization Manager:
       Color: 138; 226; 52
       Color Transformer: AxisColor
       Decay Time: 0
-      Enabled: true
+      Enabled: false
       Invert Rainbow: false
       Max Color: 138; 226; 52
       Min Color: 138; 226; 52
@@ -285,7 +320,7 @@ Visualization Manager:
       Unreliable: false
       Use Fixed Frame: true
       Use rainbow: true
-      Value: true
+      Value: false
     - Class: rviz/MarkerArray
       Enabled: false
       Marker Topic: /MarkerArray
@@ -322,7 +357,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 28.234617233276367
+      Distance: 22.775543212890625
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
@@ -330,17 +365,17 @@ Visualization Manager:
         Value: false
       Field of View: 0.7853981852531433
       Focal Point:
-        X: -3.1591713428497314
-        Y: -9.889115333557129
-        Z: -5.833194255828857
+        X: 4.7364912033081055
+        Y: -6.8026933670043945
+        Z: -4.869414329528809
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.5347967147827148
+      Pitch: 0.5397967100143433
       Target Frame: global
-      Yaw: 1.5171829462051392
+      Yaw: 2.2021827697753906
     Saved: ~
 Window Geometry:
   Displays:
