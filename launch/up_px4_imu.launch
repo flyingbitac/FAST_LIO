@@ -2,7 +2,7 @@
 <!-- Launch file for Livox MID360 LiDAR -->
 
     <arg name="rviz" default="true" />
-    <arg name="lid_topic" default="/scan"/>
+    <arg name="lid_topic" default="/livox/lidar"/>
     <arg name="imu_topic" default="/mavros/imu/data"/>
     <arg name="extrinsic_Tx" default="0"/>
     <arg name="extrinsic_Ty" default="0"/>

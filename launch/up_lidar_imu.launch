@@ -2,11 +2,11 @@
 <!-- Launch file for Livox MID360 LiDAR -->
 
     <arg name="rviz" default="true" />
-    <arg name="lid_topic" default="/scan"/>
+    <arg name="lid_topic" default="/livox/lidar"/>
     <arg name="imu_topic" default="/livox/imu"/>
-    <arg name="extrinsic_Tx" default="0"/>
-    <arg name="extrinsic_Ty" default="0"/>
-    <arg name="extrinsic_Tz" default="0"/>
+    <arg name="extrinsic_Tx" default="-0.011"/>
+    <arg name="extrinsic_Ty" default="-0.02329"/>
+    <arg name="extrinsic_Tz" default="0.04412"/>
     <arg name="extrinsic_est_en" default="false"/>
     <arg name="pcd_save_en" default="false"/>
     <!-- how many LiDAR frames saved in each pcd file; -->
