@@ -181,7 +181,6 @@ void Preprocess::avia_handler(const livox_ros_driver2::CustomMsg::ConstPtr &msg)
       }
     }
   }
-  printf("blind %lf\n", blind);
 }
 
 void Preprocess::oust64_handler(const sensor_msgs::PointCloud2::ConstPtr &msg)
