@@ -1,0 +1,58 @@
+<launch>
+<!-- Launch file for Livox MID360 LiDAR -->
+
+    <!-- px4 and imu frequency adjustment -->
+    <include file="$(find mavros)/launch/px4.launch"/>
+    <node pkg="mavros" type="mavcmd" name="imu_freq_adjust_1" args="long 511 105 5000 0 0 0 0 0" launch-prefix="bash -c 'sleep 1; $0 $@' "/>
+    <node pkg="mavros" type="mavcmd" name="imu_freq_adjust_2" args="long 511 31 5000 0 0 0 0 0" launch-prefix="bash -c 'sleep 2; $0 $@' "/>
+
+    <!-- start livox lidar -->
+    <arg name="ip" default="192.168.1.12"/>
+    <param name="ip" type="string" value="$(arg ip)"/>
+    <include file="$(find livox_ros_driver2)/launch_ROS1/msg_MID360.launch"/>
+
+    <arg name="rviz" default="false" />
+    <arg name="lid_topic" default="/livox/lidar"/>
+    <arg name="imu_topic" default="/mavros/imu/data"/>
+    <arg name="extrinsic_Tx" default="0"/>
+    <arg name="extrinsic_Ty" default="0"/>
+    <arg name="extrinsic_Tz" default="0.05"/>
+    <arg name="extrinsic_est_en" default="false"/>
+    <arg name="pcd_save_en" default="false"/>
+    <!-- how many LiDAR frames saved in each pcd file; -->
+    <!-- -1 : all frames will be saved in ONE pcd file, may lead to memory crash when having too much frames. -->
+    <arg name="pcd_save_interval" default="-1"/>
+    <arg name="pub_map_points" default="true"/>
+    <arg name="blind_distance" default="0.01"/>
+
+    <arg name="filter_size_surf" default="0.1"/>
+    <arg name="filter_size_map" default="0.1"/>
+
+    <rosparam command="load" file="$(find fast_lio)/config/mid360.yaml" />
+
+    <param name="feature_extract_enable" type="bool" value="0"/>
+    <param name="point_filter_num" type="int" value="3"/>
+    <param name="max_iteration" type="int" value="3" />
+	<param name="filter_size_surf" type="double" value="$(arg filter_size_surf)" />
+	<param name="filter_size_map" type="double" value="$(arg filter_size_map)" />
+    <param name="cube_side_length" type="double" value="1000" />
+    <param name="runtime_pos_log_enable" type="bool" value="0" />
+
+    <param name="lid_topic" type="string" value="$(arg lid_topic)"/>
+    <param name="imu_topic" type="string" value="$(arg imu_topic)"/>
+    <param name="extrinsic_Tx" type="double" value="$(arg extrinsic_Tx)"/>
+    <param name="extrinsic_Ty" type="double" value="$(arg extrinsic_Ty)"/>
+    <param name="extrinsic_Tz" type="double" value="$(arg extrinsic_Tz)"/>
+    <param name="extrinsic_est_en" type="bool" value="$(arg extrinsic_est_en)"/>
+    <param name="pcd_save_en" type="bool" value="$(arg pcd_save_en)"/>
+    <param name="pcd_save_interval" type="int" value="$(arg pcd_save_interval)"/>
+    <param name="pub_map_points" type="bool" value="$(arg pub_map_points)"/>
+    <param name="blind_distance" type="double" value="$(arg blind_distance)"/>
+
+    <node pkg="fast_lio" type="fastlio_mapping" name="laserMapping" output="screen"  launch-prefix="bash -c 'sleep 2; $0 $@' "/> 
+
+    <group if="$(arg rviz)">
+        <node launch-prefix="nice" pkg="rviz" type="rviz" name="fast_lio_rviz" args="-d $(find fast_lio)/rviz_cfg/loam_livox.rviz" />
+    </group>
+
+</launch>
