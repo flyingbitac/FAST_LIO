@@ -9,7 +9,9 @@
     <!-- start livox lidar -->
     <arg name="ip" default="192.168.1.12"/>
     <param name="ip" type="string" value="$(arg ip)"/>
-    <include file="$(find livox_ros_driver2)/launch_ROS1/msg_MID360.launch"/>
+    <include file="$(find livox_ros_driver2)/launch_ROS1/msg_MID360.launch">
+        <arg name="ip" value="$(arg ip)"/>
+    </include>
 
     <arg name="rviz" default="false" />
     <arg name="lid_topic" default="/livox/lidar"/>
